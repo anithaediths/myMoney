@@ -1,5 +1,6 @@
 package com.example.geektrust;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -14,24 +15,24 @@ class RoundingTest {
          NumberFormat nf = NumberFormat.getNumberInstance();
          nf.setMaximumFractionDigits(0);
          String rounded = nf.format(123.656);
-         System.out.println(rounded);
+         Assertions.assertEquals("124", rounded);
 
          String rounded1 = String.format("%.0f", 123.656);
-         System.out.println(rounded1);
+         Assertions.assertEquals("124", rounded1);
 
          DecimalFormat df = new DecimalFormat("#,###");
          df.setRoundingMode(RoundingMode.HALF_UP);
          String rounded2 = df.format(123.656);
-         System.out.println(rounded2);
+         Assertions.assertEquals("124", rounded2);
 
          double largeDouble = 123.656;
          BigDecimal big = new BigDecimal(largeDouble);
          big = big.setScale(0, RoundingMode.HALF_UP);
          String rounded3 = big.toString();
-         System.out.println(rounded3);
+         Assertions.assertEquals("124", rounded3);
 
          String newValue = Double.toString(Math.floor(largeDouble));
-         System.out.println(newValue);
+         Assertions.assertEquals("123.0", newValue);
 
      }
 }
