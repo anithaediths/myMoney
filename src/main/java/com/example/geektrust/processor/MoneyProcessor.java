@@ -4,6 +4,7 @@ import com.example.geektrust.helper.Constants;
 import com.example.geektrust.helper.MoneyUtility;
 import com.example.geektrust.model.TransactionContext;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,18 +20,15 @@ public class MoneyProcessor implements IMoneyProcessor {
     @Override
     public void allocateMoney(TransactionContext transactionContext,
                               String[] instructions) {
-        double totalAllocatedAmount = DBL_ZERO;
-        double allocatedAmount;
-
         List<Double> investment = transactionContext.getInvestment();
         int count = transactionContext.getCount();
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
 
-        for (int i = Constants.ONE; i < instructions.length; i++) {
-            allocatedAmount = Double.parseDouble(instructions[i]);
-            totalAllocatedAmount += allocatedAmount;
-            investment.add(allocatedAmount);
-        }
+        Arrays.stream(instructions).skip(Constants.ONE).forEach(instruction -> {
+            investment.add( Double.parseDouble(instruction));
+        });
+
+        double totalAllocatedAmount = investment.stream().mapToDouble(Double::doubleValue).sum();
         investment.add(totalAllocatedAmount);
 
         portfolio.put(count, investment);
@@ -42,16 +40,14 @@ public class MoneyProcessor implements IMoneyProcessor {
         transactionContext.setCount(count);
     }
 
-
     @Override
     public void processSIP(TransactionContext transactionContext, String[] instructions) {
         List<Double> sip = transactionContext.getSip();
-        for (int i = Constants.ONE; i < instructions.length; i++) {
-            sip.add(Double.parseDouble(instructions[i]));
-        }
+        Arrays.stream(instructions).skip(Constants.ONE).forEach(instruction -> {
+            sip.add( Double.parseDouble(instruction));
+        });
         transactionContext.setSip(sip);
     }
-
 
     @Override
     public void changeGains(TransactionContext transactionContext, String[] instructions) {

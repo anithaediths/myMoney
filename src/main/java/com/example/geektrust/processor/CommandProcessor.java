@@ -1,6 +1,7 @@
 package com.example.geektrust.processor;
 
 import com.example.geektrust.command.Command;
+import com.example.geektrust.helper.Constants;
 import com.example.geektrust.model.TransactionContext;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -15,14 +16,10 @@ public class CommandProcessor {
     }
 
     public void readAndProcessCommand(List<String> months, List<String> lines) {
-        transactionContext.setInvestment(new LinkedList<>());
-        transactionContext.setUpdatedInvestment(new LinkedList<>());
-        transactionContext.setSip(new LinkedList<>());
-        transactionContext.setPortfolio(new LinkedHashMap<>());
-        transactionContext.setPortfolioPercent(new double[3]);
+        initializeTransactionContext();
 
         for (String line : lines) {
-            String[] instructions = line.trim().split(" ");
+            String[] instructions = line.trim().split(Constants.SPACE);
 
             Command command = Command.valueOf(instructions[0]);
 
@@ -45,5 +42,13 @@ public class CommandProcessor {
 
             }
         }
+    }
+
+    private void initializeTransactionContext() {
+        transactionContext.setInvestment(new LinkedList<>());
+        transactionContext.setUpdatedInvestment(new LinkedList<>());
+        transactionContext.setSip(new LinkedList<>());
+        transactionContext.setPortfolio(new LinkedHashMap<>());
+        transactionContext.setPortfolioPercent(new double[3]);
     }
 }
