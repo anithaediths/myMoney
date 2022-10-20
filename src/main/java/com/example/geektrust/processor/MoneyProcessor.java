@@ -34,6 +34,15 @@ public class MoneyProcessor implements IMoneyProcessor {
         transactionContext.setCount(count);
     }
 
+
+    public void processSIP(TransactionContext transactionContext, String[] instructions) {
+        List<Double> sip = transactionContext.getSip();
+        for (int i = 1; i < instructions.length; i++) {
+            sip.add(Double.parseDouble(instructions[i]));
+        }
+        transactionContext.setSip(sip);
+    }
+
     public void calculatePercent(TransactionContext transactionContext, List<Double> investment, double total) {
         double[] portfolioPercent = transactionContext.getPortfolioPercent();
         for (int i = 0; i < investment.size() - 1; i++) {
@@ -42,52 +51,6 @@ public class MoneyProcessor implements IMoneyProcessor {
         transactionContext.setPortfolioPercent(portfolioPercent);
     }
 
-/*
-    public void changeGains(TransactionContext transactionContext, String[] instructions) {
-        Pattern p = Pattern.compile("^-?\\d+\\.?\\d+");
-        Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
-
-        List<Double> sip = transactionContext.getSip();
-        int count = transactionContext.getCount();
-
-        int previousPortfolioIndex = count - 1;
-        List<Double> recentPortfolio = portfolio.get(previousPortfolioIndex);
-        List<Double> updatedInvestment = transactionContext.getUpdatedInvestment();
-        double totalInvestmentAmount = 0;
-
-        for (int i = 1; i < instructions.length - 1; i++) {
-            Matcher m = p.matcher(instructions[i]);
-            if (m.find()) {
-                double value = Double.parseDouble(m.group());
-                double recentPortfolioAssetAmount = recentPortfolio.get(i - 1);
-
-                if (previousPortfolioIndex > 0) {
-                    double recentPortfolioSIPAssetAmount = recentPortfolioAssetAmount + sip.get(i - 1);
-                    double recentPortfolioSIPAssetTotalAmountInPct = recentPortfolioSIPAssetAmount * value;
-                    double recentPortfolioSIPAssetTotalAmount = recentPortfolioSIPAssetTotalAmountInPct / 100;
-                    double updatedPortfolioSIPAssetAmount = recentPortfolioSIPAssetTotalAmount + recentPortfolioSIPAssetAmount;
-                    updatedInvestment.add(updatedPortfolioSIPAssetAmount);
-                    totalInvestmentAmount += updatedPortfolioSIPAssetAmount;
-                } else {
-                    double recentPortfolioSIPAssetTotalAmountInPct = recentPortfolioAssetAmount * value;
-                    double recentPortfolioSIPAssetTotalAmount = recentPortfolioSIPAssetTotalAmountInPct / 100;
-                    double updatedPortfolioSIPAssetAmount = recentPortfolioSIPAssetTotalAmount + recentPortfolioAssetAmount;
-                    updatedInvestment.add(updatedPortfolioSIPAssetAmount);
-                    totalInvestmentAmount += updatedPortfolioSIPAssetAmount;
-                }
-            }
-        }
-        updatedInvestment.add(totalInvestmentAmount);
-        portfolio.put(count, updatedInvestment);
-        transactionContext.setUpdatedInvestment(updatedInvestment);
-        transactionContext.setPortfolio(portfolio);
-        count++;
-        transactionContext.setCount(count);
-
-    }
-*/
-
-
     public void changeGains(TransactionContext transactionContext, String[] instructions) {
         Pattern p = Pattern.compile("^-?\\d+\\.?\\d+");
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
@@ -95,7 +58,6 @@ public class MoneyProcessor implements IMoneyProcessor {
         int count = transactionContext.getCount();
 
         List<Double> listValues = portfolio.get(count - 1);
-
         List<Double> updatedInvestment = new LinkedList<>();
 
         double total = 0;
@@ -111,26 +73,26 @@ public class MoneyProcessor implements IMoneyProcessor {
                     double recentPortfolioSIPAssetTotalAmountInPct = recentPortfolioSIPAssetAmount * value;
                     double recentPortfolioSIPAssetTotalAmount = recentPortfolioSIPAssetTotalAmountInPct / 100;
                     double updatedPortfolioSIPAssetAmount = recentPortfolioSIPAssetTotalAmount + recentPortfolioSIPAssetAmount;
-                    updatedInvestment.add(updatedPortfolioSIPAssetAmount);
-                    total += updatedPortfolioSIPAssetAmount;
+                    double updatedPortfolioSIPAssetAmountFlr = Math.round(Math.floor(updatedPortfolioSIPAssetAmount));
+                    updatedInvestment.add(updatedPortfolioSIPAssetAmountFlr);
+                    total += updatedPortfolioSIPAssetAmountFlr;
                 } else {
                     double recentPortfolioSIPAssetTotalAmountInPct = recentPortfolioAssetAmount * value;
                     double recentPortfolioSIPAssetTotalAmount = recentPortfolioSIPAssetTotalAmountInPct / 100;
                     double updatedPortfolioSIPAssetAmount = recentPortfolioSIPAssetTotalAmount + recentPortfolioAssetAmount;
-                    updatedInvestment.add(updatedPortfolioSIPAssetAmount);
-                    total += updatedPortfolioSIPAssetAmount;
+                    double updatedPortfolioSIPAssetAmountFlr = Math.round(Math.floor(updatedPortfolioSIPAssetAmount));
+                    updatedInvestment.add(updatedPortfolioSIPAssetAmountFlr);
+                    total += updatedPortfolioSIPAssetAmountFlr;
                 }
             }
         }
         updatedInvestment.add(total);
         portfolio.put(count, updatedInvestment);
+        System.out.println(portfolio);
         transactionContext.setUpdatedInvestment(updatedInvestment);
         transactionContext.setPortfolio(portfolio);
         count++;
         transactionContext.setCount(count);
-
-
-        //   return count;
     }
 
     public String printBalance(TransactionContext transactionContext, int index) {
@@ -143,7 +105,6 @@ public class MoneyProcessor implements IMoneyProcessor {
             sb.append(" ");
         }
         System.out.println(sb);
-       // logger.info(sb.toString());
         return sb.toString();
     }
 
@@ -178,7 +139,8 @@ public class MoneyProcessor implements IMoneyProcessor {
         for (double portfolioPct : portfolioPercent) {
             updatedInvestment.add(portfolioPct * totalAmount);
             totalPortfolioAssetAmount = portfolioPct * totalAmount;
-            sb.append(totalPortfolioAssetAmount.shortValue());
+
+            sb.append((Math.round(Math.floor(totalPortfolioAssetAmount))));
             sb.append(" ");
         }
 
@@ -191,12 +153,5 @@ public class MoneyProcessor implements IMoneyProcessor {
         System.out.println(sb);
     }
 
-    public void processSIP(TransactionContext transactionContext, String[] instructions) {
-        List<Double> sip = transactionContext.getSip();
-        for (int i = 1; i < instructions.length; i++) {
-            sip.add(Double.parseDouble(instructions[i]));
-        }
-        transactionContext.setSip(sip);
-    }
 
 }
