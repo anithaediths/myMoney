@@ -50,7 +50,7 @@ public class MoneyUtility {
         System.out.println(stringBuilder);
     }
 
-    public static double[] calculatePercent(TransactionContext transactionContext, List<Double> investment, double total) {
+    public static double[] calculatePortfolioPercent(TransactionContext transactionContext, List<Double> investment, double total) {
         double[] portfolioPercent = transactionContext.getPortfolioPercent();
         for (int i = Constants.ZERO; i < investment.size() - Constants.ONE; i++) {
             portfolioPercent[i] = investment.get(i) / total;

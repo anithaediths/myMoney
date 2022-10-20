@@ -10,7 +10,7 @@ public interface IMoneyProcessor {
 
     void changeGains(TransactionContext transactionContext, String[] instructions);
 
-    String printBalance(TransactionContext transactionContext, int index);
+    void printBalance(TransactionContext transactionContext, int index);
 
     void rebalance(TransactionContext transactionContext);
 

@@ -35,7 +35,7 @@ public class MoneyProcessor implements IMoneyProcessor {
 
         portfolio.put(count, investment);
         transactionContext.setPortfolio(portfolio);
-        double[] portfolioPercent = MoneyUtility.calculatePercent(transactionContext, investment, totalAllocatedAmount);
+        double[] portfolioPercent = MoneyUtility.calculatePortfolioPercent(transactionContext, investment, totalAllocatedAmount);
         transactionContext.setPortfolioPercent(portfolioPercent);
 
         count++;
@@ -60,16 +60,16 @@ public class MoneyProcessor implements IMoneyProcessor {
         List<Double> sip = transactionContext.getSip();
         int count = transactionContext.getCount();
 
-        List<Double> listValues = portfolio.get(count - Constants.ONE);
+        List<Double> portfolioValues = portfolio.get(count - Constants.ONE);
         List<Double> updatedInvestment = new LinkedList<>();
 
         double total = DBL_ZERO;
 
         for (int i = Constants.ONE; i < instructions.length - Constants.ONE; i++) {
-            Matcher m = pattern.matcher(instructions[i]);
-            if (m.find()) {
-                double portfolioIncreasePercentage = Double.parseDouble(m.group());
-                double recentPortfolioAssetAmount = listValues.get(i - Constants.ONE);
+            Matcher matcher = pattern.matcher(instructions[i]);
+            if (matcher.find()) {
+                double portfolioIncreasePercentage = Double.parseDouble(matcher.group());
+                double recentPortfolioAssetAmount = portfolioValues.get(i - Constants.ONE);
                 double updatedPortfolioSIPAssetAmountFlr;
 
                 if (count - Constants.ONE > Constants.ZERO) {
@@ -84,24 +84,25 @@ public class MoneyProcessor implements IMoneyProcessor {
         }
         updatedInvestment.add(total);
         portfolio.put(count, updatedInvestment);
+
         transactionContext.setUpdatedInvestment(updatedInvestment);
         transactionContext.setPortfolio(portfolio);
+
         count++;
         transactionContext.setCount(count);
     }
 
     @Override
-    public String printBalance(TransactionContext transactionContext, int index) {
+    public void printBalance(TransactionContext transactionContext, int index) {
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
         List<Double> monthlyValues = portfolio.get(index + Constants.ONE);
         StringBuilder sb = new StringBuilder();
 
         for (int i = Constants.ZERO; i < monthlyValues.size() - Constants.ONE; i++) {
             sb.append(monthlyValues.get(i).shortValue());
-            sb.append(" ");
+            sb.append(Constants.SPACE);
         }
         System.out.println(sb);
-        return sb.toString();
     }
 
     @Override
