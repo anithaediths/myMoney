@@ -43,7 +43,7 @@ public class Main {
 
             commandProcessor.readAndProcessCommand(months, lines);
         } catch (Exception e) {
-
+            System.err.print(e.getMessage());
         }
     }
 
