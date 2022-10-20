@@ -6,6 +6,7 @@ public interface IMoneyProcessor {
 
     void allocateMoney(TransactionContext transactionContext,
                       String[] instructions);
+    void processSIP(TransactionContext transactionContext, String[] instructions);
 
     void changeGains(TransactionContext transactionContext, String[] instructions);
 
@@ -13,5 +14,4 @@ public interface IMoneyProcessor {
 
     void rebalance(TransactionContext transactionContext);
 
-    void processSIP(TransactionContext transactionContext, String[] instructions);
 }

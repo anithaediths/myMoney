@@ -1,10 +1,7 @@
-package com.example.geektrust;
+package com.example.geektrust.processor;
 
 import com.example.geektrust.command.Command;
 import com.example.geektrust.model.TransactionContext;
-import com.example.geektrust.processor.IMoneyProcessor;
-import com.example.geektrust.processor.MoneyProcessor;
-
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,8 +14,7 @@ public class CommandProcessor {
          iMoneyProcessor = new MoneyProcessor();
     }
 
-
-    void readAndProcessCommand(List<String> months, List<String> lines) {
+    public void readAndProcessCommand(List<String> months, List<String> lines) {
         transactionContext.setInvestment(new LinkedList<>());
         transactionContext.setUpdatedInvestment(new LinkedList<>());
         transactionContext.setSip(new LinkedList<>());
@@ -50,8 +46,4 @@ public class CommandProcessor {
             }
         }
     }
-
-
-
-
 }

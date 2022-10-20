@@ -1,5 +1,7 @@
 package com.example.geektrust;
 
+import com.example.geektrust.processor.CommandProcessor;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.LinkedList;
@@ -41,7 +43,7 @@ public class Main {
 
             commandProcessor.readAndProcessCommand(months, lines);
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 

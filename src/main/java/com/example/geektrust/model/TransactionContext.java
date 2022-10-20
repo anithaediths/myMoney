@@ -3,8 +3,6 @@ package com.example.geektrust.model;
 import java.util.List;
 import java.util.Map;
 
-//@Getter
-//@Setter
 public class TransactionContext {
 
     private double[] portfolioPercent;

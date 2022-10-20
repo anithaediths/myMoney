@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-class roundingTest {
+class RoundingTest {
 
      @Test
      void testRounding() {
