@@ -21,16 +21,14 @@ public class MoneyUtility {
 
     public static void rebalance(TransactionContext transactionContext) {
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
-        double[] portfolioPercent = transactionContext.getPortfolioPercent();
         List<Double> updatedInvestment = new LinkedList<>();
         int count = transactionContext.getCount();
 
         double totalAmount;
-        List<Double> currentPortfolio;
-        currentPortfolio = portfolio.get(portfolio.size()-1);
+        List<Double> currentPortfolio = portfolio.get(portfolio.size()-1);
         totalAmount = floorAndRound(currentPortfolio.get(currentPortfolio.size() - Constants.ONE));
 
-        for (double portfolioPct : portfolioPercent) {
+        for (double portfolioPct : transactionContext.getPortfolioPercent()) {
             updatedInvestment.add(floorAndRound(portfolioPct * totalAmount));
         }
 

@@ -13,7 +13,6 @@ class TestMoneyUtility {
     @BeforeEach
     void setup() {
         transactionContext.setInvestment(new LinkedList<>());
-        transactionContext.setUpdatedInvestment(new LinkedList<>());
         transactionContext.setSip(new LinkedList<>());
         LinkedHashMap<Integer, List<Double>> portfolio = new LinkedHashMap<>();
         portfolio.put(0, Arrays.asList(6000.0, 3000.0, 1000.0));

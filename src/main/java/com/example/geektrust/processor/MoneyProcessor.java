@@ -17,6 +17,7 @@ public class MoneyProcessor implements IMoneyProcessor {
     private static final int SIX = 6;
     private static final int TWELVE = 12;
     private static final String CANNOTREBALANCE = "CANNOT_REBALANCE";
+    private static final Pattern PATTERN_PORTFOLIO_PERCENTAGE = Pattern.compile(REGEX_PORTFOLIO_PERCENTAGE);
 
     @Override
     public void allocateMoney(TransactionContext transactionContext,
@@ -57,7 +58,6 @@ public class MoneyProcessor implements IMoneyProcessor {
     }
 
     private void processGains(TransactionContext transactionContext, String[] instructions) {
-        Pattern pattern = Pattern.compile(REGEX_PORTFOLIO_PERCENTAGE);
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
         List<Double> sip = transactionContext.getSip();
         int count = transactionContext.getCount();
@@ -65,24 +65,24 @@ public class MoneyProcessor implements IMoneyProcessor {
         List<Double> portfolioValues = portfolio.get(count - Constants.ONE);
         List<Double> investments = new LinkedList<>();
 
-        double total = Constants.ZERO;
+        double totalAmountForMonth = Constants.ZERO;
 
         for (int i = Constants.ONE; i < instructions.length - Constants.ONE; i++) {
-            Matcher matcher = pattern.matcher(instructions[i]);
+            Matcher matcher = PATTERN_PORTFOLIO_PERCENTAGE.matcher(instructions[i]);
             if (matcher.find()) {
                 double portfolioIncreasePercentage = Double.parseDouble(matcher.group());
                 double recentPortfolioAssetAmount = portfolioValues.get(i - Constants.ONE);
-                double updatedPortfolioSIPAssetAmountFlr = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioAssetAmount));;
+                double updatedPortfolioSIPAssetAmount = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioAssetAmount));
 
                 if (count - Constants.ONE > Constants.ZERO) {
                     double recentPortfolioSIPAssetAmount = recentPortfolioAssetAmount + sip.get(i - Constants.ONE);
-                    updatedPortfolioSIPAssetAmountFlr = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioSIPAssetAmount));
+                    updatedPortfolioSIPAssetAmount = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioSIPAssetAmount));
                 }
-                investments.add(updatedPortfolioSIPAssetAmountFlr);
-                total += MoneyUtility.floorAndRound(updatedPortfolioSIPAssetAmountFlr);
+                investments.add(updatedPortfolioSIPAssetAmount);
+                totalAmountForMonth += MoneyUtility.floorAndRound(updatedPortfolioSIPAssetAmount);
             }
         }
-        investments.add(total);
+        investments.add(totalAmountForMonth);
         portfolio.put(count, investments);
         transactionContext.setPortfolio(portfolio);
 
