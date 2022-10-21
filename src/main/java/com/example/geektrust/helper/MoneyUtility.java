@@ -37,7 +37,6 @@ public class MoneyUtility {
         updatedInvestment.add(totalAmount);
         portfolio.put(count - Constants.ONE, updatedInvestment);
         transactionContext.setPortfolio(portfolio);
-        transactionContext.setUpdatedInvestment(updatedInvestment);
     }
 
     public static double[] calculatePortfolioPercent(TransactionContext transactionContext, List<Double> investment, double total) {

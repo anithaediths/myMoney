@@ -8,7 +8,6 @@ public class TransactionContext {
     private double[] portfolioPercent;
     private Map<Integer, List<Double>> portfolio;
     private List<Double> sip;
-    private List<Double> updatedInvestment;
     private List<Double> investment;
     private int count;
     public List<Double> getSip() {
@@ -34,14 +33,6 @@ public class TransactionContext {
 
     public void setSip(List<Double> sip) {
         this.sip = sip;
-    }
-
-    public List<Double> getUpdatedInvestment() {
-        return updatedInvestment;
-    }
-
-    public void setUpdatedInvestment(List<Double> updatedInvestment) {
-        this.updatedInvestment = updatedInvestment;
     }
 
     public List<Double> getInvestment() {

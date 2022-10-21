@@ -10,6 +10,8 @@ import java.util.List;
 public class CommandProcessor {
     TransactionContext transactionContext;
     IMoneyProcessor iMoneyProcessor;
+    private static final int THREE = 3;
+
     public CommandProcessor() {
          transactionContext = new TransactionContext();
          iMoneyProcessor = new MoneyProcessor();
@@ -21,7 +23,7 @@ public class CommandProcessor {
         for (String line : lines) {
             String[] instructions = line.trim().split(Constants.SPACE);
 
-            Command command = Command.valueOf(instructions[0]);
+            Command command = Command.valueOf(instructions[Constants.ZERO]);
 
             switch (command) {
                 case ALLOCATE:
@@ -34,21 +36,19 @@ public class CommandProcessor {
                     iMoneyProcessor.changeGains(transactionContext, instructions);
                     break;
                 case BALANCE:
-                    iMoneyProcessor.printBalance(transactionContext, months.indexOf(instructions[1]));
+                    iMoneyProcessor.printBalance(transactionContext, months.indexOf(instructions[Constants.ONE]));
                     break;
                 case REBALANCE:
                     iMoneyProcessor.rebalance(transactionContext);
                     break;
-
             }
         }
     }
 
     private void initializeTransactionContext() {
         transactionContext.setInvestment(new LinkedList<>());
-        transactionContext.setUpdatedInvestment(new LinkedList<>());
         transactionContext.setSip(new LinkedList<>());
         transactionContext.setPortfolio(new LinkedHashMap<>());
-        transactionContext.setPortfolioPercent(new double[3]);
+        transactionContext.setPortfolioPercent(new double[THREE]);
     }
 }

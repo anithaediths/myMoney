@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 public class MoneyProcessor implements IMoneyProcessor {
     private static final String REGEX_PORTFOLIO_PERCENTAGE = "^-?\\d+\\.?\\d+";
-    private static final int DBL_ZERO = 0;
     private static final int SIX = 6;
     private static final int TWELVE = 12;
     private static final String CANNOTREBALANCE = "CANNOT_REBALANCE";
@@ -49,45 +48,46 @@ public class MoneyProcessor implements IMoneyProcessor {
 
     @Override
     public void changeGains(TransactionContext transactionContext, String[] instructions) {
+        processGains(transactionContext, instructions);
+
+        String currentMonth = instructions[instructions.length - 1];
+        if (currentMonth.equals(Months.JUNE.name()) || currentMonth.equals(Months.DECEMBER.name())) {
+            MoneyUtility.rebalance(transactionContext);
+        }
+    }
+
+    private void processGains(TransactionContext transactionContext, String[] instructions) {
         Pattern pattern = Pattern.compile(REGEX_PORTFOLIO_PERCENTAGE);
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
         List<Double> sip = transactionContext.getSip();
         int count = transactionContext.getCount();
 
         List<Double> portfolioValues = portfolio.get(count - Constants.ONE);
-        List<Double> updatedInvestment = new LinkedList<>();
+        List<Double> investments = new LinkedList<>();
 
-        double total = DBL_ZERO;
-        String currentMonth = instructions[instructions.length - 1];
+        double total = Constants.ZERO;
 
         for (int i = Constants.ONE; i < instructions.length - Constants.ONE; i++) {
             Matcher matcher = pattern.matcher(instructions[i]);
             if (matcher.find()) {
                 double portfolioIncreasePercentage = Double.parseDouble(matcher.group());
                 double recentPortfolioAssetAmount = portfolioValues.get(i - Constants.ONE);
-                double updatedPortfolioSIPAssetAmountFlr;
+                double updatedPortfolioSIPAssetAmountFlr = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioAssetAmount));;
 
                 if (count - Constants.ONE > Constants.ZERO) {
                     double recentPortfolioSIPAssetAmount = recentPortfolioAssetAmount + sip.get(i - Constants.ONE);
                     updatedPortfolioSIPAssetAmountFlr = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioSIPAssetAmount));
-                } else {
-                    updatedPortfolioSIPAssetAmountFlr = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioAssetAmount));
                 }
-                updatedInvestment.add(updatedPortfolioSIPAssetAmountFlr);
+                investments.add(updatedPortfolioSIPAssetAmountFlr);
                 total += MoneyUtility.floorAndRound(updatedPortfolioSIPAssetAmountFlr);
             }
         }
-        updatedInvestment.add(total);
-        transactionContext.setUpdatedInvestment(updatedInvestment);
-        portfolio.put(count, transactionContext.getUpdatedInvestment());
+        investments.add(total);
+        portfolio.put(count, investments);
         transactionContext.setPortfolio(portfolio);
 
         count++;
         transactionContext.setCount(count);
-
-        if (currentMonth.equals(Months.JUNE.name()) || currentMonth.equals(Months.DECEMBER.name())) {
-            MoneyUtility.rebalance(transactionContext);
-        }
     }
 
     @Override
