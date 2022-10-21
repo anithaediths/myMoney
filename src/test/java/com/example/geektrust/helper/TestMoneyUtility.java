@@ -1,6 +1,5 @@
 package com.example.geektrust.helper;
 
-import com.example.geektrust.helper.MoneyUtility;
 import com.example.geektrust.model.TransactionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +31,7 @@ class TestMoneyUtility {
 
     @Test
     void testPrintRebalance() {
-        Assertions.assertDoesNotThrow(() ->MoneyUtility.printRebalance(transactionContext));
+        Assertions.assertDoesNotThrow(() ->MoneyUtility.rebalance(transactionContext));
     }
 
     @Test

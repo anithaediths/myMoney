@@ -2,6 +2,7 @@ package com.example.geektrust.helper;
 
 import com.example.geektrust.model.TransactionContext;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,34 +19,37 @@ public class MoneyUtility {
         return Math.round(Math.floor(updatedPortfolioSIPAssetAmount));
     }
 
-    public static void printRebalance(TransactionContext transactionContext) {
+    public static void rebalance(TransactionContext transactionContext) {
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
         double[] portfolioPercent = transactionContext.getPortfolioPercent();
-        List<Double> updatedInvestment = transactionContext.getUpdatedInvestment();
+        List<Double> updatedInvestment = new LinkedList<>();
         int count = transactionContext.getCount();
 
         double totalAmount;
         List<Double> currentPortfolio;
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        currentPortfolio = portfolio.get(count - 1);
-
-        totalAmount = currentPortfolio.get(currentPortfolio.size() - Constants.ONE);
+        currentPortfolio = portfolio.get(portfolio.size()-1);
+        totalAmount = Math.round(Math.floor(currentPortfolio.get(currentPortfolio.size() - Constants.ONE)));
 
         for (double portfolioPct : portfolioPercent) {
-            updatedInvestment.add(portfolioPct * totalAmount);
-            Double totalPortfolioAssetAmount = portfolioPct * totalAmount;
-
-            stringBuilder.append((Math.round(Math.floor(totalPortfolioAssetAmount))));
-            stringBuilder.append(Constants.SPACE);
+            updatedInvestment.add(Math.floor(portfolioPct * totalAmount));
         }
 
         updatedInvestment.add(totalAmount);
         portfolio.put(count - Constants.ONE, updatedInvestment);
-
         transactionContext.setPortfolio(portfolio);
         transactionContext.setUpdatedInvestment(updatedInvestment);
+      //  printRebalance(updatedInvestment);
+    }
+
+    public static void printRebalance(List<Double> updatedInvestment) {
+        StringBuilder stringBuilder = new StringBuilder();
+        updatedInvestment.remove(updatedInvestment.size()-1);
+        updatedInvestment.forEach(ui -> {
+            stringBuilder.append((Math.round(Math.floor(ui))));
+            stringBuilder.append(Constants.SPACE);
+
+        });
+
 
         System.out.println(stringBuilder);
     }
