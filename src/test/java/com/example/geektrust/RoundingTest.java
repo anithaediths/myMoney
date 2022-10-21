@@ -36,11 +36,4 @@ class RoundingTest {
 
      }
 
-     @Test
-     void testModAction() {
-         System.out.println(6 % 6);
-         System.out.println(12 % 6);
-         System.out.println(4 % 6);
-         System.out.println(8 % 6);
-     }
 }

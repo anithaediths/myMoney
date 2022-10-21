@@ -26,9 +26,7 @@ public class MoneyProcessor implements IMoneyProcessor {
         int count = transactionContext.getCount();
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
 
-        Arrays.stream(instructions).skip(Constants.ONE).forEach(instruction -> {
-            investment.add(Double.parseDouble(instruction));
-        });
+        Arrays.stream(instructions).skip(Constants.ONE).forEach(instruction -> investment.add(Double.parseDouble(instruction)));
 
         double totalAllocatedAmount = investment.stream().mapToDouble(Double::doubleValue).sum();
         investment.add(totalAllocatedAmount);
@@ -45,9 +43,7 @@ public class MoneyProcessor implements IMoneyProcessor {
     @Override
     public void processSIP(TransactionContext transactionContext, String[] instructions) {
         List<Double> sip = transactionContext.getSip();
-        Arrays.stream(instructions).skip(Constants.ONE).forEach(instruction -> {
-            sip.add(Double.parseDouble(instruction));
-        });
+        Arrays.stream(instructions).skip(Constants.ONE).forEach(instruction -> sip.add(Double.parseDouble(instruction)));
         transactionContext.setSip(sip);
     }
 
@@ -73,12 +69,12 @@ public class MoneyProcessor implements IMoneyProcessor {
 
                 if (count - Constants.ONE > Constants.ZERO) {
                     double recentPortfolioSIPAssetAmount = recentPortfolioAssetAmount + sip.get(i - Constants.ONE);
-                    updatedPortfolioSIPAssetAmountFlr = Math.round(Math.floor(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioSIPAssetAmount)));
+                    updatedPortfolioSIPAssetAmountFlr = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioSIPAssetAmount));
                 } else {
-                    updatedPortfolioSIPAssetAmountFlr = Math.round(Math.floor(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioAssetAmount)));
+                    updatedPortfolioSIPAssetAmountFlr = MoneyUtility.floorAndRound(MoneyUtility.getUpdatedPortfolioSIPAssetAmountFlr(portfolioIncreasePercentage, recentPortfolioAssetAmount));
                 }
                 updatedInvestment.add(updatedPortfolioSIPAssetAmountFlr);
-                total += Math.round(Math.floor(updatedPortfolioSIPAssetAmountFlr));
+                total += MoneyUtility.floorAndRound(updatedPortfolioSIPAssetAmountFlr);
             }
         }
         updatedInvestment.add(total);
@@ -92,27 +88,15 @@ public class MoneyProcessor implements IMoneyProcessor {
         if (currentMonth.equals(Months.JUNE.name()) || currentMonth.equals(Months.DECEMBER.name())) {
             MoneyUtility.rebalance(transactionContext);
         }
-
     }
 
     @Override
     public void printBalance(TransactionContext transactionContext, int index) {
         Map<Integer, List<Double>> portfolio = transactionContext.getPortfolio();
-        List<Double> monthlyValues = portfolio.get(index + Constants.ONE);
         StringBuilder sb = new StringBuilder();
-       // System.out.println(portfolio);
 
         List<Double> portfolioForPrint = portfolio.get(index+1);
-      //  System.out.println("portfolioForPrint "+ portfolioForPrint);
-        for (int i = 0; i < portfolioForPrint.size() - 1; i++) {
-            sb.append(Math.round(Math.floor(portfolioForPrint.get(i))));
-            sb.append(Constants.SPACE);
-        }
-       /* for (int i = Constants.ZERO; i < monthlyValues.size() - Constants.ONE; i++) {
-            sb.append(monthlyValues.get(i).shortValue());
-            sb.append(Constants.SPACE);
-        }*/
-        System.out.println(sb);
+        MoneyUtility.printPortfolio(sb, portfolioForPrint);
     }
 
     @Override
@@ -130,11 +114,7 @@ public class MoneyProcessor implements IMoneyProcessor {
                 rebalancedPortfolio = portfolio.get(TWELVE);
             }
 
-            for (int i = 0; i < rebalancedPortfolio.size() - 1; i++) {
-                stringBuilder.append(Math.round(Math.floor(rebalancedPortfolio.get(i))));
-                stringBuilder.append(Constants.SPACE);
-            }
-            System.out.println(stringBuilder);
+            MoneyUtility.printPortfolio(stringBuilder, rebalancedPortfolio);
         }
     }
 

@@ -28,30 +28,16 @@ public class MoneyUtility {
         double totalAmount;
         List<Double> currentPortfolio;
         currentPortfolio = portfolio.get(portfolio.size()-1);
-        totalAmount = Math.round(Math.floor(currentPortfolio.get(currentPortfolio.size() - Constants.ONE)));
+        totalAmount = floorAndRound(currentPortfolio.get(currentPortfolio.size() - Constants.ONE));
 
         for (double portfolioPct : portfolioPercent) {
-            updatedInvestment.add(Math.floor(portfolioPct * totalAmount));
+            updatedInvestment.add(floorAndRound(portfolioPct * totalAmount));
         }
 
         updatedInvestment.add(totalAmount);
         portfolio.put(count - Constants.ONE, updatedInvestment);
         transactionContext.setPortfolio(portfolio);
         transactionContext.setUpdatedInvestment(updatedInvestment);
-      //  printRebalance(updatedInvestment);
-    }
-
-    public static void printRebalance(List<Double> updatedInvestment) {
-        StringBuilder stringBuilder = new StringBuilder();
-        updatedInvestment.remove(updatedInvestment.size()-1);
-        updatedInvestment.forEach(ui -> {
-            stringBuilder.append((Math.round(Math.floor(ui))));
-            stringBuilder.append(Constants.SPACE);
-
-        });
-
-
-        System.out.println(stringBuilder);
     }
 
     public static double[] calculatePortfolioPercent(TransactionContext transactionContext, List<Double> investment, double total) {
@@ -60,5 +46,17 @@ public class MoneyUtility {
             portfolioPercent[i] = investment.get(i) / total;
         }
         return portfolioPercent;
+    }
+
+    public static double floorAndRound(double input) {
+        return Math.round(Math.floor(input));
+    }
+
+    public static void printPortfolio(StringBuilder stringBuilder, List<Double> currentPortfolio) {
+        for (int i = Constants.ZERO; i < currentPortfolio.size() - Constants.ONE; i++) {
+            stringBuilder.append(Math.round(Math.floor(currentPortfolio.get(i))));
+            stringBuilder.append(Constants.SPACE);
+        }
+        System.out.println(stringBuilder);
     }
 }
